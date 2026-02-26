@@ -1,0 +1,319 @@
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; 
+  font-family: Arial, sans-serif;
+}
+
+.hero-header {
+  position: relative;
+  background-image: url('../img/fondo-index.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;        
+  color: white;
+}
+
+.navbar {
+  position: absolute;        
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;   
+  align-items: center;
+  padding: 1rem 2rem;
+  z-index: 10;               
+}
+
+.navbar .logo-link {
+  position: absolute;
+  left: 2rem;
+  display: inline-block;
+  z-index: 11;
+}
+
+.navbar .logo-link img {
+  height: 40px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.navbar .logo-link:hover img {
+  transform: scale(1.1);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #007bff;
+}
+
+.hero-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.hero-text p {
+  margin: 0;         
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+section {
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: #f5f5f5; 
+}
+
+section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+section p {
+  margin: 0.5rem 0;
+}
+
+#calendario {
+  background: #f2f3f7;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+#calendario h2:first-of-type {
+  margin-bottom: 0.5rem;
+  color: #222;
+}
+
+#calendario > p {
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+.header-calendario {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  background: #222;
+  color: white;
+  border-radius: 10px;
+  max-width: 1200px;
+  margin: 0 auto 20px auto;
+}
+
+.header-calendario #titulo-calendario {
+  color: white !important;
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  min-width: 250px !important;
+  text-align: center !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+.header-calendario button {
+  cursor: pointer;
+  padding: 8px 16px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.header-calendario button:hover {
+  background: #0056b3;
+}
+
+.header-calendario button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+#calendario-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #f2f3f7;
+}
+
+.semana {
+  text-align: center;
+  font-weight: bold;
+  background: #ddd;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #222;
+}
+
+.dia {
+  background: white;
+  border-radius: 14px;
+  min-height: 180px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 3px 6px rgba(0,0,0,.12);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.top b {
+  font-size: 16px;
+  color: #222;
+}
+
+.addBtn {
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.addBtn:hover {
+  background: #0056b3;
+}
+
+.tarea {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  margin-top: 4px;
+  border-radius: 7px;
+  font-size: 12px;
+  color: white;
+  cursor: grab;
+}
+
+.alta { background: #e74c3c; }
+.media { background: #f1c40f; color: #222; }
+.baja { background: #2ecc71; }
+
+.hora {
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.dia.dragover {
+  outline: 3px dashed #3498db;
+}
+
+.exportar button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff; 
+  color: white;
+  cursor: pointer;
+  margin: 1rem 0;
+}
+
+.exportar button:hover {
+  background-color: #0056b3;
+}
+
+footer {
+  background-color: #222;
+  color: white;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+footer .logo-link {
+  display: inline-block;
+  cursor: pointer;
+}
+
+footer .logo-link img {
+  height: 40px;
+  margin-bottom: 0.5rem;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+footer .logo-link:hover img {
+  transform: scale(1.1);
+}
+
+.estadisticas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.tarjeta-estadisticas {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tarjeta-estadisticas h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: #007bff; 
+}
+
+.tarjeta-estadisticas p {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.tarjeta-estadisticas:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
