@@ -1,6 +1,4 @@
 
-// ✅ CALENDARIO INTERACTIVO
-
 const calendarioGrid = document.getElementById("calendario-grid");
 const tituloCalendario = document.getElementById("titulo-calendario");
 const prev = document.getElementById("prev");
@@ -23,7 +21,6 @@ function guardar() {
   localStorage.setItem("tareas", JSON.stringify(tareas));
 }
 
-/* ===== crear tarea con hora ===== */
 function crearTarea(fechaKey) {
   let texto = prompt("Texto:");
   if (!texto) return;
@@ -43,7 +40,6 @@ function crearTarea(fechaKey) {
   render();
 }
 
-/* ===== render ===== */
 function render() {
   calendarioGrid.innerHTML = "";
 
@@ -76,7 +72,6 @@ function render() {
     const div = document.createElement("div");
     div.className = "dia";
 
-    /* drop */
     div.ondragover = e => {
       e.preventDefault();
       div.classList.add("dragover");
@@ -96,7 +91,6 @@ function render() {
       render();
     };
 
-    /* top */
     const top = document.createElement("div");
     top.className = "top";
 
@@ -113,7 +107,6 @@ function render() {
 
     div.appendChild(top);
 
-    /* tareas */
     (tareas[fechaKey] || [])
       .sort((a, b) => a.hora.localeCompare(b.hora))
       .forEach((t, i) => {
@@ -130,7 +123,6 @@ function render() {
           }));
         };
 
-        /* ✅ Botón eliminar (X) en vez de checkbox */
         const deleteBtn = document.createElement("span");
         deleteBtn.textContent = "✕";
         deleteBtn.style.cursor = "pointer";
@@ -171,7 +163,6 @@ function render() {
   prev.disabled = fechaActual <= fechaMinima;
 }
 
-/* navegación */
 prev.onclick = () => {
   let test = new Date(fechaActual);
   test.setMonth(test.getMonth() - 1);
@@ -188,4 +179,4 @@ next.onclick = () => {
 
 render();
 
-console.log('✅ Calendario cargado correctamente');
+console.log('Calendario cargado correctamente');
