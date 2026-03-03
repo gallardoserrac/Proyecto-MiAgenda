@@ -1,0 +1,140 @@
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.izquierda {
+  flex: 1.2;
+  background-color: lightskyblue;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: flex-start;
+  padding: 3rem;
+}
+
+.izquierda img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 2rem;
+}
+
+.texto-izquierda h2 {
+  margin-bottom: 1.5rem;
+}
+
+.linea-divisora {
+  width: 2px;
+  background-color: whitesmoke;
+}
+
+.derecha {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  background-color: white;
+}
+
+.derecha form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.derecha fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.derecha legend {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.derecha label {
+  margin-top: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  display: block;
+}
+
+.derecha input {
+  padding: 0.6rem;
+  border: 1px solid grey;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.botones {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.botones button {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  color: white;
+}
+
+.botones button[type="submit"] {
+  background-color: green;
+}
+
+.botones button[type="reset"] {
+  background-color: red;
+}
+
+.cuenta {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.cuenta a {
+  color: green;
+  text-decoration: none;
+}
+
+.cuenta a:hover {
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 768px) {
+  .contenedor {
+    flex-direction: column;
+  }
+
+  .izquierda, .derecha {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .linea-divisora {
+    display: none;
+  }
+
+  .botones {
+    flex-direction: column;
+  }
+}
