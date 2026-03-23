@@ -13,6 +13,27 @@ if (!isset($_SESSION["usuario_id"])) {
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="../img/favicon-32x32.png" type="image/png">
   <title>MiAgenda</title>
+  <style>
+    .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:10px 16px 16px;max-width:1200px;margin:0 auto}
+    .col{background:#fff;border:1px solid #e7e7ee;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .col h3{margin:0;padding:12px 12px;border-bottom:1px solid #eee;font-size:14px;letter-spacing:.2px}
+    .top{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #eee}
+    .top button{border:1px solid #e3e3ee;background:#111;color:#fff;border-radius:10px;padding:8px 10px;font-size:12px;cursor:pointer}
+    .top button:active{transform:translateY(1px)}
+    .zona{padding:12px;min-height:360px}
+    .dragover{outline:2px dashed #b9b9c9;outline-offset:-6px;background:#fafaff}
+    .card{border:1px solid #e9e9f2;border-radius:12px;margin:0 0 10px;box-shadow:0 3px 10px rgba(0,0,0,.05);cursor:grab;overflow:hidden}
+    .card:active{cursor:grabbing}
+    .cardTop{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.06);background:rgba(255,255,255,.65)}
+    .dots{display:flex;gap:7px;align-items:center}
+    .dotBtn{width:12px;height:12px;border-radius:999px;border:1px solid rgba(0,0,0,.14);cursor:pointer;padding:0;display:inline-block}
+    .dotClose{background:#ff5f57}
+    .dotColor{background:#febc2e}
+    .titleMini{font-size:12px;color:#333;opacity:.9;user-select:none}
+    .content{padding:10px}
+    .txt{min-height:22px;outline:none}
+    .picker{position:absolute;left:-9999px;top:-9999px}
+  </style>
 </head>
 <body>
 
@@ -27,7 +48,7 @@ if (!isset($_SESSION["usuario_id"])) {
       <div class="nav-links">
         <a href="#inicio">Inicio</a>
         <a href="#calendario">Calendario</a>
-        <a href="#actividades">Actividades</a>
+        <a href="#kanban">Kanban</a>
         <a href="#exportar">Exportar</a>
         <a href="#logros">Logros</a>
         <a href="../backend/autentificacion/logout.php" style="color: #dc3545;">Cerrar Sesión (<?php echo htmlspecialchars($_SESSION["usuario"]); ?>)</a>
@@ -71,9 +92,15 @@ if (!isset($_SESSION["usuario_id"])) {
     <div id="calendario-grid"></div>
   </section>
 
-  <section class="actividades" id="actividades">
-    <h2>Tarjetas de Actividades</h2>
-    <p>Crea y organiza tus actividades escolares con tarjetas fáciles de gestionar.</p>
+  <section class="kanban-section" id="kanban">
+    <h2>Kanban</h2>
+    <p>Organiza tus tareas visualmente arrastrando y soltando tarjetas.</p>
+    <div class="kanban">
+      <div class="col" data-col="pendiente"><h3>Por hacer</h3><div class="top"><span></span><button class="add">+ Añadir</button></div><div class="zona" id="suelta-1"></div></div>
+      <div class="col" data-col="en_progreso"><h3>En curso</h3><div class="top"><span></span><button class="add">+ Añadir</button></div><div class="zona" id="suelta-2"></div></div>
+      <div class="col" data-col="en_revision"><h3>En revisión</h3><div class="top"><span></span><button class="add">+ Añadir</button></div><div class="zona" id="suelta-3"></div></div>
+      <div class="col" data-col="completado"><h3>Hecho</h3><div class="top"><span></span><button class="add">+ Añadir</button></div><div class="zona" id="suelta-4"></div></div>
+    </div>
   </section>
 
   <section class="exportar" id="exportar">
@@ -100,6 +127,7 @@ if (!isset($_SESSION["usuario_id"])) {
   </footer>
 
   <script src="calendario.js"></script>
+  <script src="kanban.js"></script>
 
 <script>
 async function cargarEstadisticas() {
