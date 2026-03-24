@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin - MiAgenda</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .admin-header h1 { color: #333; }
+    .btn-volver { background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; }
+    .btn-volver:hover { background: #5a6268; }
+    .panel-doble { display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
+    .panel-alumnos { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .panel-tareas { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .panel-alumnos h2, .panel-tareas h2 { margin-top: 0; color: #333; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+    .lista-alumnos { list-style: none; padding: 0; margin: 0; max-height: 500px; overflow-y: auto; }
+    .lista-alumnos li { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s; }
+    .lista-alumnos li:hover { background: #f8f9fa; }
+    .lista-alumnos li.activo { background: #3498db; color: white; }
+    .lista-alumnos li .email { font-size: 12px; opacity: 0.8; }
+    .tabla-tareas { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .tabla-tareas th, .tabla-tareas td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    .tabla-tareas th { background: #3498db; color: white; }
+    .tabla-tareas tr:hover { background: #f8f9fa; }
+    .btn-accion { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; }
+    .btn-editar { background: #ffc107; color: #333; }
+    .btn-eliminar { background: #dc3545; color: white; }
+    .btn-nueva { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
+    .btn-nueva:hover { background: #218838; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h2 { margin: 0; }
+    .btn-cerrar { background: none; border: none; font-size: 24px; cursor: pointer; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    .btn-guardar { background: #3498db; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; width: 100%; }
+    .btn-guardar:hover { background: #2980b9; }
+    .sin-seleccion { text-align: center; padding: 40px; color: #666; }
+    .prioridad-alta { color: #e74c3c; font-weight: bold; }
+    .prioridad-media { color: #f39c12; }
+    .prioridad-baja { color: #27ae60; }
+    .completada-si { color: #27ae60; }
+    .completada-no { color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>👨‍🏫 Panel de Profesor - Gestión de Alumnos</h1>
+      <a href="index.php" class="btn-volver">← Volver al Inicio</a>
+    </div>
+    
+    <div class="panel-doble">
+      <!-- Panel Izquierdo: Lista de Alumnos -->
+      <div class="panel-alumnos">
+        <h2>📚 Alumnos</h2>
+        <ul class="lista-alumnos" id="lista-alumnos">
+          <li>Cargando...</li>
+        </ul>
+      </div>
+      
+      <!-- Panel Derecho: Tareas del Alumno Seleccionado -->
+      <div class="panel-tareas">
+        <h2>📋 Tareas del Alumno</h2>
+        <div id="contenido-tareas">
+          <div class="sin-seleccion">
+            <p>Selecciona un alumno de la lista para ver sus tareas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Crear/Editar Tarea -->
+  <div class="modal" id="modalTarea">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-titulo">Nueva Tarea</h2>
+        <button class="btn-cerrar" onclick="cerrarModal()">&times;</button>
+      </div>
+      <form id="formTarea">
+        <input type="hidden" id="tarea-id">
+        <div class="form-group">
+          <label>Título *</label>
+          <input type="text" id="tarea-titulo" required>
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea id="tarea-descripcion"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Fecha *</label>
+          <input type="date" id="tarea-fecha" required>
+        </div>
+        <div class="form-group">
+          <label>Hora</label>
+          <input type="time" id="tarea-hora">
+        </div>
+        <div class="form-group">
+          <label>Prioridad</label>
+          <select id="tarea-prioridad">
+            <option value="alta">Alta</option>
+            <option value="media" selected>Media</option>
+            <option value="baja">Baja</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Estado Kanban</label>
+          <select id="tarea-kanban">
+            <option value="pendiente">Pendiente</option>
+            <option value="en_progreso">En Progreso</option>
+            <option value="en_revision">En Revisión</option>
+            <option value="completado">Completado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="tarea-completada"> Marcar como completada
+          </label>
+        </div>
+        <button type="submit" class="btn-guardar">Guardar Tarea</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API = '../backend/admin/alumnos.php';
+    let alumnoSeleccionado = null;
+
+    document.addEventListener('DOMContentLoaded', cargarAlumnos);
+
+    async function cargarAlumnos() {
+      try {
+        const r = await fetch(API + '?accion=listar');
+        const d = await r.json();
+        const lista = document.getElementById('lista-alumnos');
+        
+        if (d.error) {
+          lista.innerHTML = '<li style="color:red;">' + d.error + '</li>';
+          return;
+        }
+        
+        if (d.alumnos.length === 0) {
+          lista.innerHTML = '<li>No hay alumnos registrados</li>';
+          return;
+        }
+        
+        lista.innerHTML = d.alumnos.map(a => `
+          <li onclick="seleccionarAlumno(${a.id}, '${a.usuario}')" data-id="${a.id}">
+            <strong>${a.usuario}</strong>
+            <div class="email">${a.email}</div>
+          </li>
+        `).join('');
+      } catch (e) {
+        document.getElementById('lista-alumnos').innerHTML = '<li style="color:red;">Error cargando alumnos</li>';
+      }
+    }
+
+    async function seleccionarAlumno(id, nombre) {
+      alumnoSeleccionado = id;
+      
+      // Actualizar estilo de selección
+      document.querySelectorAll('.lista-alumnos li').forEach(li => {
+        li.classList.remove('activo');
+        if (parseInt(li.dataset.id) === id) li.classList.add('activo');
+      });
+      
+      // Cargar tareas del alumno
+      document.getElementById('contenido-tareas').innerHTML = '<p>Cargando tareas...</p>';
+      
+      try {
+        const r = await fetch(API + '?accion=ver_tareas&alumno_id=' + id);
+        const d = await r.json();
+        
+        if (d.error) {
+          document.getElementById('contenido-tareas').innerHTML = '<p style="color:red;">' + d.error + '</p>';
+          return;
+        }
+        
+        if (d.tareas.length === 0) {
+          document.getElementById('contenido-tareas').innerHTML = `
+            <p>Este alumno no tiene tareas registradas.</p>
+            <button class="btn-nueva" onclick="abrirModalCrear()">+ Nueva Tarea</button>
+          `;
+          return;
+        }
+        
+        let html = `
+          <p><strong>Alumno:</strong> ${nombre}</p>
+          <button class="btn-nueva" onclick="abrirModalCrear()">+ Nueva Tarea</button>
+          <table class="tabla-tareas">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Fecha</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Completada</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${d.tareas.map(t => `
+                <tr>
+                  <td>${t.id}</td>
+                  <td>${t.titulo}</td>
+                  <td>${t.fecha}</td>
+                  <td class="prioridad-${t.prioridad}">${t.prioridad}</td>
+                  <td>${t.estado_kanban || 'pendiente'}</td>
+                  <td class="${t.completada ? 'completada-si' : 'completada-no'}">${t.completada ? '✓ Sí' : '✗ No'}</td>
+                  <td>
+                    <button class="btn-accion btn-editar" onclick="abrirModalEditar(${t.id}, '${t.titulo.replace(/'/g, "\\'")}', '${t.descripcion || ''}', '${t.fecha}', '${t.hora || ''}', '${t.prioridad}', '${t.estado_kanban || 'pendiente'}', ${t.completada})">Editar</button>
+                    <button class="btn-accion btn-eliminar" onclick="eliminarTarea(${t.id})">Eliminar</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        
+        document.getElementById('contenido-tareas').innerHTML = html;
+      } catch (e) {
+        document.getElementById('contenido-tareas').innerHTML = '<p style="color:red;">Error cargando tareas</p>';
+      }
+    }
+
+    function abrirModalCrear() {
+      if (!alumnoSeleccionado) {
+        alert('Primero selecciona un alumno');
+        return;
+      }
+      document.getElementById('modal-titulo').textContent = 'Nueva Tarea para Alumno';
+      document.getElementById('tarea-id').value = '';
+      document.getElementById('tarea-titulo').value = '';
+      document.getElementById('tarea-descripcion').value = '';
+      document.getElementById('tarea-fecha').value = '';
+      document.getElementById('tarea-hora').value = '';
+      document.getElementById('tarea-prioridad').value = 'media';
+      document.getElementById('tarea-kanban').value = 'pendiente';
+      document.getElementById('tarea-completada').checked = false;
+      document.getElementById('modalTarea').style.display = 'flex';
+    }
+
+    function abrirModalEditar(id, titulo, descripcion, fecha, hora, prioridad, kanban, completada) {
+      document.getElementById('modal-titulo').textContent = 'Editar Tarea';
+      document.getElementById('tarea-id').value = id;
+      document.getElementById('tarea-titulo').value = titulo;
+      document.getElementById('tarea-descripcion').value = descripcion;
+      document.getElementById('tarea-fecha').value = fecha;
+      document.getElementById('tarea-hora').value = hora;
+      document.getElementById('tarea-prioridad').value = prioridad;
+      document.getElementById('tarea-kanban').value = kanban;
+      document.getElementById('tarea-completada').checked = completada;
+      document.getElementById('modalTarea').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+      document.getElementById('modalTarea').style.display = 'none';
+    }
+
+    document.getElementById('formTarea').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('tarea-id').value;
+      const accion = id ? 'editar_tarea' : 'crear_tarea';
+      
+      const data = {
+        id: id ? parseInt(id) : null,
+        alumno_id: alumnoSeleccionado,
+        titulo: document.getElementById('tarea-titulo').value,
+        descripcion: document.getElementById('tarea-descripcion').value,
+        fecha: document.getElementById('tarea-fecha').value,
+        hora: document.getElementById('tarea-hora').value || null,
+        prioridad: document.getElementById('tarea-prioridad').value,
+        estado_kanban: document.getElementById('tarea-kanban').value,
+        completada: document.getElementById('tarea-completada').checked ? 1 : 0
+      };
+      
+      try {
+        const r = await fetch(API + '?accion=' + accion, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const d = await r.json();
+        
+        if (d.success) {
+          alert(id ? 'Tarea actualizada' : 'Tarea creada');
+          cerrarModal();
+          seleccionarAlumno(alumnoSeleccionado, '');
+        } else {
+          alert('Error: ' + d.error);
+        }
+      } catch (e) {
+        alert('Error de conexión');
+      }
+    });
+
+    async function eliminarTarea(id) {
+      if (!confirm('¿Seguro que deseas eliminar esta tarea?')) return;
+      
+      try {
+        const r = await fetch(API + '?accion=eliminar_tarea', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id })
+        });
+        const d = await r.json();
+        
+        if (d.success) {
+          alert('Tarea eliminada');
+          seleccionarAlumno(alumnoSeleccionado, '');
+        } else {
+          alert('Error: ' + d.error);
+        }
+      } catch (e) {
+        alert('Error de conexión');
+      }
+    }
+
+    window.onclick = function(e) {
+      if (e.target === document.getElementById('modalTarea')) {
+        cerrarModal();
+      }
+    }
+  </script>
+</body>
+</html>

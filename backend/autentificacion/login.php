@@ -40,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     
                     if ($fila['rol'] === 'profesor') {
-                        header("Location: ../admin/index.php");
+                        header("Location: ../../frontend/admin.html");
                     } else {
-                        header("Location: ../../frontend/index.html");
+                        header("Location: ../../frontend/index.php");
                     }
                     exit;
                     
